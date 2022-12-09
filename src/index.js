@@ -14,8 +14,9 @@ searchInput.addEventListener(
 );
 
 function renderCountries() {
-  countriesList.innerHTML = '';
+  cleanHtml();
   const query = searchInput.value.trim();
+
   fetchCountries(query).then(countries => {
     const countriesEl = countries
       .map(({ name, capital, population, flags, languages }) => {
