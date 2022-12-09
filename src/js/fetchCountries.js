@@ -1,7 +1,7 @@
-export const fetchCountries = query => {
+export default function fetchCountries(query) {
   const urlAPI = `https://restcountries.com/v3.1/name/${query}?fields=name,capital,population,flags,languages`;
 
-  fetch(urlAPI)
+  return fetch(urlAPI)
     .then(res => {
       if (!res.ok) {
         throw new Error(res.status);
@@ -10,10 +10,9 @@ export const fetchCountries = query => {
       return res.json();
     })
     .then(countries => {
-      console.log(countries);
       return countries;
     })
     .catch(err => {
       console.log(err);
     });
-};
+}
