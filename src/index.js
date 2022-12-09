@@ -12,19 +12,22 @@ searchInput.addEventListener(
   debounce(() => {
     const query = searchInput.value.trim();
     countriesList.innerHTML = '';
+
+    if (!query) {
+      return;
+    }
+
     fetchCountries(query).then(foundData => {
-      if (foundData !== '') {
-        if (foundData.length > 10) {
-          Notiflix.Notify.info(
-            'Too many matches found. Please enter a more specific name.'
-          );
-        } else if (foundData.length === 0) {
-          Notiflix.Notify.failure('Oops, there is no country with that name');
-        } else if (foundData.length >= 2 && foundData.length <= 10) {
-          renderOneCountry(foundData);
-        } else {
-          renderCountriesList(foundData);
-        }
+      if (foundData.length > 10) {
+        Notiflix.Notify.info(
+          'Too many matches found. Please enter a more specific name.'
+        );
+      } else if (foundData.length === 0) {
+        Notiflix.Notify.failure('Oops, there is no country with that name');
+      } else if (foundData.length >= 2 && foundData.length <= 10) {
+        renderOneCountry(foundData);
+      } else {
+        renderCountriesList(foundData);
       }
     });
   }, DEBOUNCE_DELAY)
