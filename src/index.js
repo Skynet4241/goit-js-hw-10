@@ -5,16 +5,27 @@ import Notiflix from 'notiflix';
 
 const DEBOUNCE_DELAY = 300;
 const searchInput = document.getElementById('search-box');
-const countriesField = document.querySelector('.country-info');
 const countriesList = document.querySelector('.country-list');
 
 searchInput.addEventListener(
   'input',
   debounce(() => {
     const query = searchInput.value.trim();
-    cleanHtml();
+    countriesList.innerHTML = '';
     fetchCountries(query).then(foundData => {
-      renderCountriesList(foundData);
+      if (foundData !== '') {
+        if (foundData.length > 10) {
+          Notiflix.Notify.info(
+            'Too many matches found. Please enter a more specific name.'
+          );
+        } else if (foundData.length === 0) {
+          Notiflix.Notify.failure('Oops, there is no country with that name');
+        } else if (foundData.length >= 2 && foundData.length <= 10) {
+          renderOneCountry(foundData);
+        } else {
+          renderCountriesList(foundData);
+        }
+      }
     });
   }, DEBOUNCE_DELAY)
 );
@@ -22,11 +33,12 @@ searchInput.addEventListener(
 function renderCountriesList(countries) {
   const countryList = countries
     .map(({ name, capital, population, flags, languages }) => {
-      return `<li>
-        <img src="${flags.svg}" alt="Flag of ${
+      return `<li class="country-item">
+      <span class="country-field"><img src="${flags.svg}" alt="Flag of ${
         name.official
       }" width = 30px height = 20px />
-        <h2>${name.official}</h2>
+        <h2 class="country-title">${name.official}</h2></span>
+        
         <p><b>Capital:</b> ${capital}</p>
         <p><b>Population:</b> ${population}</p>
         <p><b>Languages:</b> ${Object.values(languages)}</p>
@@ -39,16 +51,11 @@ function renderCountriesList(countries) {
 function renderOneCountry(countries) {
   const countryEl = countries
     .map(({ name, flags }) => {
-      return `<li>
-      <img src="${flags.svg}" alt="Flag of ${name.official}" width="30" hight="20">
+      return `<li class="country-item">
+      <img src="${flags.svg}" alt="Flag of ${name.official}" width = 30px height = 20px>
          <b>${name.official}</p>
                 </li>`;
     })
     .join('');
   countriesList.insertAdjacentHTML('beforeend', countryEl);
-}
-
-function cleanHtml() {
-  countriesField.innerHTML = '';
-  countriesList.innerHTML = '';
 }

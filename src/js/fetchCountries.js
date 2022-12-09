@@ -4,6 +4,9 @@ export default function fetchCountries(query) {
   return fetch(urlAPI)
     .then(res => {
       if (!res.ok) {
+        if (res.status === 404) {
+          return [];
+        }
         throw new Error(res.status);
       }
 
@@ -12,7 +15,7 @@ export default function fetchCountries(query) {
     .then(countries => {
       return countries;
     })
-    .catch(err => {
-      console.log(err);
+    .catch(error => {
+      console.log(error);
     });
 }
